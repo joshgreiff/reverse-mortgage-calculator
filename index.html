@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Josh Greiff</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./public/style.css">
+    <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.1.0/mdb.min.css"
+    rel="stylesheet"
+    />
+    <script src="https://unpkg.com/tailwindcss-jit-cdn"></script>
+    <script type="tailwind-config">
+        {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#3aadec',
+                        'primary-purple': '#7c2ae8',
+                        'primary-yellow': '#dffc01',
+                        'secondary-blue': '#00c2cb',
+                        'secondary-turqoise': '#2ed1a2',
+                        'secondary-limegreen': '#2ed1a2',
+                        'bookmark-white': '#f7f7f7',
+                        'dark': '#111827',
+                        'twitter': '#1DA1F2',
+                        'linkedin': '#0072b1',
+                        'instagram': '#E1306C'
+
+                    },
+                    fontSize: {
+                        mammoth: '8rem'
+                    },
+                    container: {
+                        center: true,
+                        padding: '1rem',
+                        screens: {
+                            lg: "1124px",
+                            xl: "1124px",
+                            "2xl": "1124px",
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @font-face {
+        font-family: mokoto-glitch;
+        src: url('./public/fonts/Mokoto\ Glitch.ttf');
+        }
+        @font-face {
+        font-family: mokoto-glitch-mark;
+        src: url('./public/fonts/Mokoto\ Glitch\ Mark.ttf');
+        }
+        @font-face {
+        font-family: mokoto-glitch-mark-2;
+        src: url('./public/fonts/Mokoto\ Glitch\ Mark\ 2.ttf');
+        }
+        @font-face {
+        font-family: mokoto-glitch-mark-outline;
+        src: url('./public/fonts/Mokto\ Glitch\ Mark\ outline.ttf');
+        }
+        @font-face {
+        font-family: poppins-regular;
+        src: url('./public/fonts/Poppins-Regular.ttf');
+        }
+
+        .poppins{
+            font-family: poppins
+        }
+
+        .card{
+
+        }
+    </style>
+    <style type="postcss"></style>
+</head>
+<body class="">
+    <!-- Header -->
+    <div class="range mx-20 mt-20">
+      <label class="form-label" for="1">Lump Sum Advance (In Thousands)</label>
+      <input min="0" max="100" type="range" class="form-range" id="1" />
+      
+    </div>
+    <div class="range mx-20 mt-10">
+      <label class="form-label" for="2">Interest Rate (%)</label>
+      <input min="0" max="15" type="range" class="form-range" id="2"/>
+      
+    </div>
+    <div class="range mx-20 mt-10">
+      <label class="form-label" for="3">Years</label>
+      <input min="0" max="75" type="range" class="form-range" id="3" />
+    </div>
+    <div class="range mx-20 my-10">
+      <label class="form-label" for="4">Monthly Loan Advance ($)</label>
+      <input min="0" max="10000" type="range" class="form-range" id="4" step="50" />
+    </div>
+
+    <div class="mx-20 shadow-lg rounded-lg overflow-hidden">
+    <div class="py-3 px-5 bg-gray-50">Balance By Year</div>
+    <canvas class="p-10 " id="chartBar"></canvas>
+    </div>
+
+
+<!-- Required chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Chart bar -->
+<script>
+  const input1 = document.getElementById('1')
+const input2 = document.getElementById('2')
+const input3 = document.getElementById('3')
+const input4 = document.getElementById('4')
+
+
+
+const inputHandler = function(){
+    
+    const labelsBarChart = []
+    const workingData = []
+
+    const lumpSum = parseInt(input1.value)
+    const interestRate = parseInt(input2.value)
+    const monthlyAdvance = parseInt(input4.value)
+    const labelCount = parseInt(input3.value)
+    // const lumpSum = 100000    
+    // const monthlyAdvance = 500
+    // const interestRate = 5
+
+    
+    // const dataPoint = total + total*((interestRate/100)*(i+1))
+    // workingData.push(dataPoint)
+    // let total = lumpSum + (monthlyAdvance*12)
+
+
+
+    
+    for(let i=0; i<labelCount; i++){
+        const targetGross = lumpSum*1000 + ((i+1)*monthlyAdvance*12)
+        const targetNet = targetGross + targetGross*((interestRate/100)*(i+1))
+
+        workingData.push(targetNet)
+        labelsBarChart.push(i+1)
+
+    }
+    
+    console.log(workingData)
+  const dataBarChart = {
+    labels: labelsBarChart,
+    datasets: [
+      {
+        label: "Reverse Mortgage Balance By Year",
+        backgroundColor: "hsl(252, 82.9%, 67.8%)",
+        borderColor: "hsl(252, 82.9%, 67.8%)",
+        data: workingData,
+      },
+    ],
+  };
+
+  const configBarChart = {
+    type: "bar",
+    data: dataBarChart,
+    options: {},
+  };
+
+
+  if (Chart.getChart("chartBar")){
+    Chart.getChart("chartBar").destroy();
+  } 
+
+  var chartBar = new Chart(
+    document.getElementById("chartBar"),
+    configBarChart
+  );
+//   chartBar.destroy()
+}
+
+
+input1.addEventListener('input', inputHandler)
+input2.addEventListener('input', inputHandler)
+input3.addEventListener('input', inputHandler)
+input4.addEventListener('input', inputHandler)
+</script>
+    <script src="./scripts.js"></script>
+
+<!-- MDB -->
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.1.0/mdb.min.js"
+></script>
+
+</body>
+</html>
